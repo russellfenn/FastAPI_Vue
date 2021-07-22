@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <title>Simple Vue.js UI</title>
+</head>
+<body>
+    <div id="app">
+        <v-app>
+            <!-- app bar -->
+            <v-app-bar app dense color="blue">
+                <v-app-bar-nav-icon @click="sidebar!=sidebar"></v-app-bar-nav-icon>
+                <v-app-bar-title>
+                    Math Demo
+                </v-app-bar-title>
+            </v-app-bar>
+            <v-main>
+                <v-navigation-drawer right absolute>
+                    <v-container>
+                        <div class="my-3">Side Panel</div>
+                        <v-divider></v-divider>
+                        <div class="my-6">
+                            <v-text-field
+                                v-for="p in inputs"
+                                v-model="p.value"
+                                :label="p.name"
+                                :key="p.name"
+                                dense
+                                outlined>
+                            </v-text-field>
+                        </div>
+                        <div class="my=3">
+                            <v-btn
+                                text
+                                color="red"
+                                @click="call_api">
+                                Math me
+                            </v-btn>
+                        </div>
+                    </v-container>
+                </v-navigation-drawer>
+                <v-card max-width=250 elevation=4>
+                  <v-card-text v-if="result">
+                      <div>
+                          Result of ({{data.operation}} {{data.arg1}} {{data.arg2}})
+                      </div>
+                  </v-card-text>
+                  <v-card-text>
+                      {{ result }}
+                  </v-card-text>
+                </v-card>
+                <v-alert type="error" v-if="msg">{{ msg }}</v-alert>
+            </v-main>
+        </v-app>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: function() {
+                return {
+                    inputs: [
+                        { name: "arg1", value: 3.2, type: "float" },
+                        { name: "arg2", value: 1.2, type: "float" },
+                        { name: "operation", value: "add", type: "str", items: ["add", "subtract"] },
+                    ],
+                    result: null,
+                    msg: null
+                }
+            },
+            methods: {
+                call_api: function() {
+                    // reformat the payload
+                    payload = this.inputs.reduce((acc, cur) => ({ ...acc, [cur.name]: cur.value }), {})
+                    axios.post("/math", payload)
+                        .then(resp => resp.data)
+                        .then(data => {
+                            this.result = data.result
+                            this.msg = data.msg
+                            this.data = data
+                        })
+                        .catch(e => console.log(e))
+                },
+            }
+        })
+    </script>
+</body>
+</html>
