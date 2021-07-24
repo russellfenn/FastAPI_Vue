@@ -27,3 +27,5 @@ def test_math_subtract(math_question: MathQuestion):
     result: MathResult = MathResult(**response.json())
 
     assert result.result == 2.9
+    assert float(result.question.arg1) == 5.2
+    assert result.question.operation == "subtract"

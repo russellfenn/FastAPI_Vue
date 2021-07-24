@@ -35,28 +35,36 @@ def read_index():
 async def math(payload: MathQuestion) -> MathResult:
     response: MathResult = MathResult(question=payload)
     try:
-        if payload.operation in ["add", "plus", "sum"]:
+        if payload.operation in ["add", "plus", "sum", "+"]:
             response.result = payload.arg1 + payload.arg2
-        elif payload.operation in ["sub", "minus", "subtract", "difference"]:
+        elif payload.operation in ["sub", "minus", "subtract", "difference", "-"]:
             response.result = payload.arg1 - payload.arg2
-        elif payload.operation in ["multiply", "product", "mult"]:
+        elif payload.operation in ["multiply", "product", "mul", "*"]:
             response.result = payload.arg1 * payload.arg2
-        elif payload.operation in ["exp", "exponent"]:
+        elif payload.operation in ["exp", "exponent", "^", "**"]:
             response.result = payload.arg1 ** payload.arg2
-        elif payload.operation in ["mod", "modulus"]:
+        elif payload.operation in ["mod", "modulus", "%"]:
             response.result = payload.arg1 % payload.arg2
-        elif payload.operation in ["divide", "div"]:
+        elif payload.operation in ["divide", "div", "/"]:
             response.result = payload.arg1 / payload.arg2
         else:
-            response.update({"is_error": True,
-                             "msg": f"I don't know how to {payload.operation}!"})
-    except (DivisionByZero, InvalidOperation) as e:
+            response.is_error = True
+            response.msg = f"I don't know how to {payload.operation}!"
+    except DivisionByZero:
         response.is_error = True
-        response.msg = f"{e}"
+        response.msg = "Division by Zero"
+    except InvalidOperation:
+        response.is_error = True
+        response.msg = "Invalid Operation"
+    except Exception as e:
+        response.is_error = True
+        response.msg = str(e)
     return response
 
 
 @app.get('/add/{arg1}/{arg2}')
 async def add(arg1: float, arg2: float) -> MathResult:
-    question: MathQuestion = MathQuestion(operation="add", arg1=arg1, arg2=arg2)
+    question: MathQuestion = MathQuestion(operation="add",
+                                          arg1=arg1,
+                                          arg2=arg2)
     return await math(question)
