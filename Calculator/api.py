@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from typing import Optional
 from decimal import Decimal, DivisionByZero, InvalidOperation
@@ -68,3 +68,12 @@ async def add(arg1: float, arg2: float) -> MathResult:
                                           arg1=arg1,
                                           arg2=arg2)
     return await math(question)
+
+
+@app.get('/', response_class=RedirectResponse)
+async def get_root(request: Request):
+    for h in request.headers:
+        print(f"{h} => {request.headers[h]}")
+    if "Accept" in request.headers:
+        if "text/html" in request.headers['Accept']:
+            return "app"
