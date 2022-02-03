@@ -4,36 +4,14 @@ I found an [article](https://6chaoran.github.io/data-story/visualization/data-en
 
 The example uses some ML stuff that, while interesting, is more than I have energy for right now, so I'll make a much simpler API, and see if I can fudge the rest.
 
-## Calculator Example
+This is morphing into a collection of FastAPI playground applications.
 
-I did a very quick calculator application, figuring it would be easy. It mostly was.
+## Examples
 
-## Floating Point Math in Python
+- [Calculator](./Calculator/README.md) - A simple calculator with a Vuetify web UI.
+- [ErrorHandler](./ErrorHandler/README.md) - Tries to log errors with malformed requests.
 
-Oh yeah - I forgot that math in python can sometimes be dumb.
+## Ideas
 
-```python
->>> 5.2 + 2.3
-7.5
->>> 5.2 - 2.3
-2.9000000000000004
-```
-
-Argh. Fortunately, the [decimal](https://docs.python.org/3/library/decimal.html) module is pretty reasonable to use.
-
-Since I had also been playing with [Julia](https://julialang.org/), I had hopes that Julia, being more math-oriented, may do the right (expected) thing, but alas:
-
-```julia
-julia> 1.1 + 1.2
-2.3
-
-julia> 1.2 - 1.1
-0.09999999999999987
-```
-
-```python
-In [9]: 1.2 - 1.1
-Out[9]: 0.09999999999999987
-```
-
-At least Python and Julia _get the same answer_.
+- Test various methods of Prometheus metrics
+- Test multiple applications mounted under the primary mount

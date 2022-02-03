@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  diagnostics:
+    #image: dtr.it.vt.edu/es/diagnostics:v1.0-20210625-201256-b11bd06c
+    image: rfenn/diagnostics:20210930
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      labels:
+        - traefik.enable=true
+        - traefik.http.services.diagnostics.loadbalancer.server.port=10000
+        - traefik.http.routers.diagnostics.entrypoints=http, https
+        - traefik.http.routers.diagnostics.tls=true
+        - treafik.http.routers.diagnostics.service=diagnostics
+        - traefik.http.routers.diagnostics.rule=PathPrefix(`/diagnostics`)
+        - traefik.http.middlewares.diagnostics-strip.stripprefix.prefixes=/diagnostics
+        - traefik.http.routers.diagnostics.middlewares=diagnostics-strip
+    networks:
+      - traefik
+      - metrics
+    environment:
+      MAX_RANDOM_DELAY: 10
+      MAX_FIXED_DELAY: 5
+
+    # We need to tell uvicorn that Traefik has stripped /diagnostics from the path
+    command: ["api:app", "--root-path", "/diagnostics"]
+networks:
+  traefik:
+    external: true
+  metrics:
+    external: true

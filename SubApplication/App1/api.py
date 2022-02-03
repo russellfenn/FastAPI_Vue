@@ -8,9 +8,9 @@ from decimal import Decimal, DivisionByZero, InvalidOperation
 
 
 class MathQuestion(BaseModel):
-    arg1: Decimal = Field(..., example=3.5)
-    arg2: Decimal = Field(..., example=1.2)
-    operation: str = Field(..., example="add")
+    arg1: Decimal = Field(Decimal, example=3.5)
+    arg2: Decimal = Field(Decimal, example=1.2)
+    operation: str = Field(str, example="add")
 
 
 # Can you see where this is going?
@@ -22,11 +22,6 @@ class MathResult(BaseModel):
 
 
 app = FastAPI()
-
-
-@app.get("/app")
-def read_index():
-    return FileResponse("./app.html")
 
 
 # POST a simple math problem
@@ -76,8 +71,3 @@ async def get_root(request: Request):
     if "Accept" in request.headers:
         if "text/html" in request.headers['Accept']:
             return "app"
-    return "not_browser"
-
-@app.get("/not_browser")
-def read_not_browser():
-    return FileResponse("./not_a_browser.txt")

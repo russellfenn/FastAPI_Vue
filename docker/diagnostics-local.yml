@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  diagnostics:
+    image: dtr.it.vt.edu/es/diagnostics:v1.0-20210625-201256-b11bd06c
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+    ports:
+      - target: 10000
+        published: 10000
+        protocol: tcp
+        mode: host
+    environment:
+      MAX_RANDOM_DELAY: 10
+      MAX_FIXED_DELAY: 5

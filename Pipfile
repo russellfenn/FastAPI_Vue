@@ -12,6 +12,8 @@ aiofiles = "*"
 pytest = "*"
 flake8 = "*"
 requests = "*"
+ipython = "*"
+httpx = "*"
 
 [requires]
 python_version = "3.9"
